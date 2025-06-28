@@ -26,5 +26,10 @@ namespace Ahorcado_Grupo5.Controllers
 
             return View();
         }
+
+        public ActionResult MenuPrincipal()
+        {
+            return View();
+        }
     }
 }
