@@ -1,9 +1,7 @@
-﻿using MySql.Data.EntityFramework;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 
 namespace Ahorcado_Grupo5.Models
 {
-    [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class AhorcadoContext : DbContext
     {
         public AhorcadoContext() : base("name=DefaultConnection")

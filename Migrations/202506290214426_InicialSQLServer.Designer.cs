@@ -7,13 +7,13 @@ namespace Ahorcado_Grupo5.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.1")]
-    public sealed partial class CreacionTablasJugadorYPalabra : IMigrationMetadata
+    public sealed partial class InicialSQLServer : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(CreacionTablasJugadorYPalabra));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InicialSQLServer));
         
         string IMigrationMetadata.Id
         {
-            get { return "202506290050309_CreacionTablasJugadorYPalabra"; }
+            get { return "202506290214426_InicialSQLServer"; }
         }
         
         string IMigrationMetadata.Source

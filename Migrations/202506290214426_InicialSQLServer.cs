@@ -3,18 +3,40 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class AgregaTablaPartidas : DbMigration
+    public partial class InicialSQLServer : DbMigration
     {
         public override void Up()
         {
+            CreateTable(
+                "dbo.Jugadors",
+                c => new
+                    {
+                        Identificacion = c.Int(nullable: false, identity: true),
+                        Nombre = c.String(nullable: false),
+                        Marcador = c.Int(nullable: false),
+                        PartidasGanadas = c.Int(nullable: false),
+                        PartidasPerdidas = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.Identificacion);
+            
+            CreateTable(
+                "dbo.Palabras",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        TextoPalabra = c.String(nullable: false),
+                        HaSidoUsada = c.Boolean(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id);
+            
             CreateTable(
                 "dbo.Partidas",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Victoria = c.Boolean(nullable: false),
-                        Nivel = c.String(unicode: false),
-                        Fecha = c.DateTime(nullable: false, precision: 0),
+                        Nivel = c.String(),
+                        Fecha = c.DateTime(nullable: false),
                         JugadorId = c.Int(nullable: false),
                         PalabraId = c.Int(nullable: false),
                     })
@@ -33,6 +55,8 @@
             DropIndex("dbo.Partidas", new[] { "PalabraId" });
             DropIndex("dbo.Partidas", new[] { "JugadorId" });
             DropTable("dbo.Partidas");
+            DropTable("dbo.Palabras");
+            DropTable("dbo.Jugadors");
         }
     }
 }
