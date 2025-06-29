@@ -1,0 +1,83 @@
+﻿@{
+    ViewBag.Title = "Crear Jugador";
+}
+
+<div class="crear-jugador-container">
+    <a href="@Url.Action("MenuPrincipal", "Home")" class="volver-btn" title="Volver al menú principal">&#8592;</a>
+    <span class="titulo-crear">CREAR JUGADOR</span>
+
+    <div class="info-block block-blue">
+        <span class="block-icon">&#9432;</span>
+        <span class="block-title">Información Requerida</span><br />
+        <ul style="margin-bottom:0; margin-top:0.5rem;">
+            <li><b>Identificación:</b> Número entero positivo único (ej: número de cédula)</li>
+            <li><b>Nombre:</b> Tu nombre completo</li>
+        </ul>
+    </div>
+
+    <div class="input-block block-dark">
+        <span class="block-icon">#</span>
+        <label for="identificacion">Identificación</label>
+        <input type="number" id="identificacion" name="identificacion" placeholder="Ingresa tu número de identificación..." min="1" max="999999999" maxlength="9" />
+        <small>Número entero positivo único (máximo 9 dígitos)</small>
+    </div>
+
+    <div class="input-block block-dark">
+        <span class="block-icon">&#128100;</span>
+        <label for="nombre">Nombre del Jugador</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Ingresa tu nombre completo..." maxlength="50" />
+        <small id="char-count">0/50 caracteres</small>
+    </div>
+
+    <div class="preview-block block-purple">
+        <span class="block-title">Vista Previa del Jugador</span>
+        <div class="preview-content">
+            <span class="preview-icon">&#127918;</span>
+            <div>
+                <div class="jugador-nombre" id="preview-nombre">Tu Nombre</div>
+                <div class="jugador-id" id="preview-id">ID: Tu Identificación</div>
+                <div class="jugador-marcador">Marcador: 0 puntos</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="puntuacion-block block-orange">
+        <span class="block-title">Sistema de Puntuación</span>
+        <div class="puntuacion-cols">
+            <div>
+                <b>Partidas Ganadas:</b><br />
+                Fácil: +1 punto<br />
+                Normal: +2 puntos<br />
+                Difícil: +3 puntos
+            </div>
+            <div>
+                <b>Partidas Perdidas:</b><br />
+                Fácil: -1 punto<br />
+                Normal: -2 puntos<br />
+                Difícil: -3 puntos
+            </div>
+        </div>
+        <small>Nota: El marcador puede ser negativo si pierdes más partidas de las que ganas.</small>
+    </div>
+
+    <button class="crear-btn" type="submit">
+        <span style="font-size:1.3rem;">&#128100;</span> CREAR JUGADOR
+    </button>
+</div>
+
+<script>
+    // Actualizar vista previa en tiempo real y contador de caracteres
+    const nombreInput = document.getElementById('nombre');
+    const idInput = document.getElementById('identificacion');
+    const previewNombre = document.getElementById('preview-nombre');
+    const previewId = document.getElementById('preview-id');
+    const charCount = document.getElementById('char-count');
+
+    nombreInput.addEventListener('input', function() {
+        previewNombre.textContent = nombreInput.value || 'Tu Nombre';
+        charCount.textContent = nombreInput.value.length + '/50 caracteres';
+    });
+    idInput.addEventListener('input', function() {
+        previewId.textContent = idInput.value ? `ID: ${idInput.value}` : 'ID: Tu Identificación';
+    });
+</script> 

@@ -27,7 +27,6 @@
         position: fixed;
         top: 0;
         left: 0;
-        z-index: -1;
     }
     .menu-title {
         color: #ffd600;
@@ -52,6 +51,9 @@
         border: none;
         transition: transform 0.1s, box-shadow 0.1s;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        text-decoration: none;
+        display: block;
+        text-align: center;
     }
     .btn-crear { background: #1fd655; color: #fff; }
     .btn-crear:hover { background: #17b94c; transform: scale(1.03); }
@@ -75,12 +77,10 @@
         <div class="menu-title">AHORCADO</div>
         <div class="menu-subtitle">RETRO EDITION</div>
         <hr style="border: 1.5px solid #ffd600; width: 120px; margin: 0 auto 2.5rem auto; opacity: 0.7;" />
-        <form>
-            <button type="button" class="menu-btn btn-crear">Crear Jugador</button><br />
-            <button type="button" class="menu-btn btn-iniciar">Iniciar Partida</button><br />
-            <button type="button" class="menu-btn btn-agregar">Agregar Palabra</button><br />
-            <button type="button" class="menu-btn btn-leader">Leaderboard</button>
-        </form>
+        <a href="@Url.Action("CrearJugador", "Home")" class="menu-btn btn-crear">Crear Jugador</a><br />
+        <button type="button" class="menu-btn btn-iniciar">Iniciar Partida</button><br />
+        <button type="button" class="menu-btn btn-agregar">Agregar Palabra</button><br />
+        <button type="button" class="menu-btn btn-leader">Leaderboard</button>
         <div class="menu-footer">
             <!-- Texto eliminado -->
         </div>
