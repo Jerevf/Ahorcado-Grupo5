@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ahorcado_Grupo5.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -32,8 +33,23 @@ namespace Ahorcado_Grupo5.Controllers
             return View();
         }
 
+        [HttpGet]
         public ActionResult CrearJugador()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CrearJugador(int identificacion, string nombre)
+        {
+            Jugador jugador = new Jugador();
+            jugador.Identificacion = identificacion;
+            jugador.Nombre = nombre;
+            jugador.Marcador = 0;
+            jugador.PartidasPerdidas = 0;
+            jugador.PartidasGanadas = 0;
+
+
             return View();
         }
     }
