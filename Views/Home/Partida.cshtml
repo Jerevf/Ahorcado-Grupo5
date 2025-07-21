@@ -1,0 +1,98 @@
+﻿@{
+    ViewBag.Title = "IniciarPartida";
+    var palabra = ViewBag.PalabraOculta as string; 
+    var intentos = ViewBag.Intentos != null ? (int)ViewBag.Intentos : 10;
+}
+
+<style>
+    .letras-container {
+        margin: 1.5rem 0;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .letra-oculta {
+        border-bottom: 3px solid #0047ab;
+        width: 30px;
+        height: 40px;
+        text-align: center;
+        font-size: 1.5rem;
+        color: #0047ab;
+    }
+
+    .teclado {
+        display: grid;
+        grid-template-columns: repeat(10, 40px);
+        gap: 10px;
+        justify-content: center;
+        margin-top: 1.5rem;
+    }
+
+    .tecla {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: white;
+        color: #0047ab;
+        font-weight: bold;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .contador-intentos {
+        margin-top: 1.5rem;
+        background-color: yellow;
+        color: #333;
+        padding: 0.5rem 1rem;
+        display: inline-block;
+        font-weight: bold;
+        font-size: 1.2rem;
+        border: 3px solid #eee;
+    }
+</style>
+
+<div class="crear-jugador-container">
+    <a href="@Url.Action("MenuPrincipal", "Home")" class="volver-btn" title="Volver al menú principal">&#8592;</a>
+    <span class="titulo-crear">INICIAR PARTIDA</span>
+
+    <div class="letras-container">
+        @if (!string.IsNullOrEmpty(palabra))
+        {
+            foreach (var letra in palabra)
+            {
+                <div class="letra-oculta">_</div> <!-- O muestra letra si fue adivinada -->
+            }
+        }
+    </div>
+
+    <div class="teclado">
+        @{
+            string letras = "abcdefghijklmnñopqrstuvwxyz";
+            foreach (var letra in letras)
+            {
+                <button class="tecla" onclick="seleccionarLetra('@letra')">@letra</button>
+            }
+        }
+    </div>
+
+    <div class="contador-intentos">
+        @intentos
+    </div>
+</div>
+
+<script>
+    function seleccionarLetra(letra) {
+        // Aquí puedes llamar a un endpoint o enviar la letra para validarla
+        alert("Letra seleccionada: " + letra);
+    }
+</script>
+
+
+
+
+
+
+

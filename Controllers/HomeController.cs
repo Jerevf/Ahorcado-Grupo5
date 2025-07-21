@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ahorcado_Grupo5.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -36,5 +37,17 @@ namespace Ahorcado_Grupo5.Controllers
         {
             return View();
         }
+
+        public ActionResult IniciarPartida()
+        {
+            return View();
+        }
+
+        public ActionResult Partida()
+        {
+            return View();
+        }
+
+
     }
 }
