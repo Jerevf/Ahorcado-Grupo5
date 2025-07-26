@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Data.Entity;
+using Ahorcado_Grupo5.Models;
 
 namespace Ahorcado_Grupo5
 {
@@ -16,6 +18,9 @@ namespace Ahorcado_Grupo5
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            // Inicializar la base de datos
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<AhorcadoContext, Migrations.Configuration>());
         }
     }
 }

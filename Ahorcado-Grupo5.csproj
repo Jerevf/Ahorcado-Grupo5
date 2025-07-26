@@ -159,8 +159,8 @@
       <Private>True</Private>
       <HintPath>packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="ZstdSharp, Version=0.8.5.0, Culture=neutral, PublicKeyToken=8d151af33a4ad5cf, processorArchitecture=MSIL">
-      <HintPath>packages\ZstdSharp.Port.0.8.5\lib\net462\ZstdSharp.dll</HintPath>
+    <Reference Include="ZstdSharp, Version=0.8.6.0, Culture=neutral, PublicKeyToken=8d151af33a4ad5cf, processorArchitecture=MSIL">
+      <HintPath>packages\ZstdSharp.Port.0.8.6\lib\net462\ZstdSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -171,10 +171,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202506290214426_InicialSQLServer.cs" />
-    <Compile Include="Migrations\202506290214426_InicialSQLServer.Designer.cs">
-      <DependentUpon>202506290214426_InicialSQLServer.cs</DependentUpon>
-    </Compile>
+
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AhorcadoContext.cs" />
     <Compile Include="Models\Jugador.cs" />
@@ -268,11 +265,7 @@
     <Content Include="Scripts\jquery-3.7.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.1.min.map" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202506290214426_InicialSQLServer.resx">
-      <DependentUpon>202506290214426_InicialSQLServer.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
+
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -1,93 +1,1126 @@
 ﻿@{
-    ViewBag.Title = "IniciarPartida";
+    ViewBag.Title = "Partida de Ahorcado";
     var palabra = ViewBag.PalabraOculta as string; 
-    var intentos = ViewBag.Intentos != null ? (int)ViewBag.Intentos : 10;
+    var palabraOriginal = ViewBag.PalabraOriginal as string;
+    var tiempo = ViewBag.Tiempo != null ? (int)ViewBag.Tiempo : 60;
+    var partidaId = ViewBag.PartidaId;
+    var jugador = ViewBag.Jugador as Ahorcado_Grupo5.Models.Jugador;
+    var nivel = ViewBag.Nivel as string;
 }
 
 <style>
-    .letras-container {
-        margin: 1.5rem 0;
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        width: 100vw;
+        height: 100vh;
+        overflow-x: hidden;
+    }
+    .partida-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #4e2a8e 0%, #2b86c5 100%);
+        padding: 2rem;
         display: flex;
+        flex-direction: column;
+        align-items: center;
         justify-content: center;
+        position: relative;
+    }
+    .volver-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .volver-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+        color: white;
+        text-decoration: none;
+    }
+    .titulo-partida {
+        color: #ffd600;
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        text-align: center;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .subtitulo-partida {
+        color: #ff7eb9;
+        font-size: 1.2rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .game-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        max-width: 800px;
+        width: 100%;
+    }
+    .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        color: white;
+    }
+    .jugador-info {
+        display: flex;
+        align-items: center;
         gap: 1rem;
     }
-
-    .letra-oculta {
-        border-bottom: 3px solid #0047ab;
-        width: 30px;
-        height: 40px;
-        text-align: center;
-        font-size: 1.5rem;
-        color: #0047ab;
+    .jugador-avatar {
+        font-size: 2rem;
+        color: #ffd600;
     }
-
+    .jugador-details h3 {
+        margin: 0;
+        font-size: 1.2rem;
+    }
+    .jugador-details p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 0.9rem;
+    }
+    .game-stats {
+        text-align: right;
+    }
+    .intentos-display {
+        background: #ffd600;
+        color: #333;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    .nivel-display {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    .terminar-partida-container {
+        text-align: center;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+    .terminar-partida-btn {
+        background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    }
+    .terminar-partida-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+    }
+    /* Modal de confirmación */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .modal-content {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .modal-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    .modal-message {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 2rem;
+    }
+    .modal-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+    .modal-btn {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .modal-btn-seguir {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+    }
+    .modal-btn-seguir:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+    }
+    .modal-btn-salir {
+        background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+        color: white;
+    }
+    .modal-btn-salir:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+    }
+    .ahorcado-drawing {
+        text-align: center;
+        margin: 2rem 0;
+        font-family: 'Courier New', monospace;
+        font-size: 1.4rem;
+        line-height: 1.6;
+        color: #333;
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 10px;
+        border: 2px solid #dee2e6;
+        white-space: pre;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .palabra-container {
+        text-align: center;
+        margin: 2rem 0;
+    }
+    .palabra-letras {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 1rem 0;
+        flex-wrap: wrap;
+    }
+    .letra-oculta {
+        width: 40px;
+        height: 50px;
+        border-bottom: 4px solid #0047ab;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #0047ab;
+        margin: 0 0.2rem;
+        text-transform: uppercase;
+    }
+    .letra-revelada {
+        color: #28a745;
+        border-bottom-color: #28a745;
+    }
+    .teclado-container {
+        margin: 2rem 0;
+    }
     .teclado {
         display: grid;
-        grid-template-columns: repeat(10, 40px);
-        gap: 10px;
-        justify-content: center;
-        margin-top: 1.5rem;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 0.5rem;
+        max-width: 600px;
+        margin: 0 auto;
+        justify-items: center;
     }
-
     .tecla {
-        width: 40px;
-        height: 40px;
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
-        background: white;
-        color: #0047ab;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
         font-weight: bold;
         font-size: 1rem;
         border: none;
         cursor: pointer;
-        box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 45px;
+        min-height: 45px;
+    }
+    .tecla:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    .tecla:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+        transform: none;
+        opacity: 0.6;
+    }
+    .tecla.correcta {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+    .tecla.incorrecta {
+        background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+    }
+    .mensaje-juego {
+        text-align: center;
+        margin: 1rem 0;
+        padding: 1rem;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    .mensaje-ganar {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+    }
+    .mensaje-perder {
+        background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+        color: white;
+    }
+    .mensaje-info {
+        background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+        color: white;
+    }
+    .botones-accion {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    .btn-accion {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .btn-nueva-partida {
+        background: linear-gradient(135deg, #1fd655 0%, #17b94c 100%);
+        color: white;
+    }
+    .btn-nueva-partida:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(31, 214, 85, 0.4);
+    }
+    .btn-menu {
+        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        color: white;
+    }
+    .btn-menu:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+    }
+    .palabra-completa {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #28a745;
+        margin: 1rem 0;
+        text-transform: uppercase;
     }
 
-    .contador-intentos {
-        margin-top: 1.5rem;
-        background-color: yellow;
-        color: #333;
-        padding: 0.5rem 1rem;
-        display: inline-block;
-        font-weight: bold;
-        font-size: 1.2rem;
-        border: 3px solid #eee;
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .partida-container {
+            padding: 1rem;
+        }
+        
+        .titulo-partida {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .subtitulo-partida {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .game-container {
+            padding: 1.5rem;
+            max-width: 100%;
+        }
+        
+        .game-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+        
+        .terminar-partida-container {
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .terminar-partida-btn {
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .jugador-info {
+            justify-content: center;
+        }
+        
+        .game-stats {
+            flex-direction: row;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .tiempo-display,
+        .nivel-display {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+        
+        .ahorcado-drawing {
+            font-size: 0.8rem;
+            line-height: 1.2;
+            margin: 1rem 0;
+        }
+        
+        .palabra-container {
+            margin: 1rem 0;
+        }
+        
+        .palabra-letras {
+            gap: 0.3rem;
+        }
+        
+        .letra-oculta,
+        .letra-revelada {
+            width: 2rem;
+            height: 2.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .teclado-container {
+            margin: 1rem 0;
+        }
+        
+        .teclado {
+            gap: 0.3rem;
+            grid-template-columns: repeat(9, 1fr);
+            max-width: 100%;
+        }
+        
+        .tecla {
+            width: 2.5rem;
+            height: 2.5rem;
+            font-size: 0.9rem;
+            min-width: 2.5rem;
+            min-height: 2.5rem;
+        }
+        
+        .mensaje-juego {
+            font-size: 1.1rem;
+            padding: 1rem;
+        }
+        
+        .palabra-completa {
+            font-size: 1rem;
+            padding: 0.8rem;
+        }
+        
+        .botones-accion {
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .btn-accion {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .volver-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .partida-container {
+            padding: 0.5rem;
+        }
+        
+        .titulo-partida {
+            font-size: 1.8rem;
+            margin-bottom: 0.6rem;
+        }
+        
+        .subtitulo-partida {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .game-container {
+            padding: 1rem;
+        }
+        
+        .game-header {
+            padding: 0.8rem;
+            gap: 0.8rem;
+        }
+        
+        .jugador-details h3 {
+            font-size: 1rem;
+        }
+        
+        .tiempo-display,
+        .nivel-display {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+        }
+        
+        .ahorcado-drawing {
+            font-size: 0.7rem;
+            line-height: 1.1;
+        }
+        
+        .palabra-letras {
+            gap: 0.2rem;
+        }
+        
+        .letra-oculta,
+        .letra-revelada {
+            width: 1.8rem;
+            height: 2.2rem;
+            font-size: 1rem;
+        }
+        
+        .teclado {
+            gap: 0.2rem;
+            grid-template-columns: repeat(8, 1fr);
+            max-width: 100%;
+        }
+        
+        .tecla {
+            width: 2.2rem;
+            height: 2.2rem;
+            font-size: 0.8rem;
+            min-width: 2.2rem;
+            min-height: 2.2rem;
+        }
+        
+        .mensaje-juego {
+            font-size: 1rem;
+            padding: 0.8rem;
+        }
+        
+        .palabra-completa {
+            font-size: 0.9rem;
+            padding: 0.6rem;
+        }
+        
+        .btn-accion {
+            padding: 0.7rem 1.2rem;
+            font-size: 0.9rem;
+        }
+        
+        .volver-btn {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+        }
+    }
+
+    @@media (max-width: 360px) {
+        .titulo-partida {
+            font-size: 1.5rem;
+        }
+        
+        .subtitulo-partida {
+            font-size: 0.8rem;
+        }
+        
+        .game-container {
+            padding: 0.8rem;
+        }
+        
+        .game-header {
+            padding: 0.6rem;
+        }
+        
+        .jugador-details h3 {
+            font-size: 0.9rem;
+        }
+        
+        .tiempo-display,
+        .nivel-display {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.6rem;
+        }
+        
+        .ahorcado-drawing {
+            font-size: 0.6rem;
+            line-height: 1;
+        }
+        
+        .letra-oculta,
+        .letra-revelada {
+            width: 1.6rem;
+            height: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        .tecla {
+            width: 2rem;
+            height: 2rem;
+            font-size: 0.7rem;
+        }
+        
+        .mensaje-juego {
+            font-size: 0.9rem;
+            padding: 0.6rem;
+        }
+        
+        .palabra-completa {
+            font-size: 0.8rem;
+            padding: 0.5rem;
+        }
+        
+        .btn-accion {
+            padding: 0.6rem 1rem;
+            font-size: 0.8rem;
+        }
+        
+        .volver-btn {
+            width: 30px;
+            height: 30px;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Orientación horizontal en móviles */
+    @@media (max-width: 768px) and (orientation: landscape) {
+        .partida-container {
+            padding: 0.5rem;
+        }
+        
+        .game-container {
+            padding: 1rem;
+        }
+        
+        .game-header {
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        
+        .ahorcado-drawing {
+            font-size: 0.6rem;
+        }
+        
+        .teclado {
+            gap: 0.2rem;
+            grid-template-columns: repeat(10, 1fr);
+            max-width: 100%;
+        }
+        
+        .tecla {
+            width: 2rem;
+            height: 2rem;
+            font-size: 0.7rem;
+            min-width: 2rem;
+            min-height: 2rem;
+        }
+    }
+
+    /* Pantallas muy pequeñas - asegurar visibilidad de todas las letras */
+    @@media (max-width: 320px) {
+        .teclado {
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.15rem;
+            max-width: 100%;
+        }
+        
+        .tecla {
+            width: 1.8rem;
+            height: 1.8rem;
+            font-size: 0.6rem;
+            min-width: 1.8rem;
+            min-height: 1.8rem;
+        }
+        
+        .titulo-partida {
+            font-size: 1.3rem;
+        }
+        
+        .subtitulo-partida {
+            font-size: 0.7rem;
+        }
+        
+        .game-container {
+            padding: 0.5rem;
+        }
+        
+        .game-header {
+            padding: 0.4rem;
+        }
+        
+        .jugador-details h3 {
+            font-size: 0.8rem;
+        }
+        
+        .tiempo-display,
+        .nivel-display {
+            font-size: 0.6rem;
+            padding: 0.2rem 0.4rem;
+        }
+        
+        .ahorcado-drawing {
+            font-size: 0.5rem;
+            line-height: 0.9;
+        }
+        
+        .letra-oculta,
+        .letra-revelada {
+            width: 1.4rem;
+            height: 1.8rem;
+            font-size: 0.8rem;
+        }
+        
+        .mensaje-juego {
+            font-size: 0.8rem;
+            padding: 0.4rem;
+        }
+        
+        .palabra-completa {
+            font-size: 0.7rem;
+            padding: 0.3rem;
+        }
+        
+        .btn-accion {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.7rem;
+        }
+        
+        .volver-btn {
+            width: 25px;
+            height: 25px;
+            font-size: 0.8rem;
+        }
     }
 </style>
 
-<div class="crear-jugador-container">
+<div class="partida-container">
     <a href="@Url.Action("MenuPrincipal", "Home")" class="volver-btn" title="Volver al menú principal">&#8592;</a>
-    <span class="titulo-crear">INICIAR PARTIDA</span>
+    
+    <div class="titulo-partida">PARTIDA DE AHORCADO</div>
+    <div class="subtitulo-partida">¡Adivina la palabra antes de que se complete el ahorcado!</div>
+    
+    <div class="game-container">
+        <div class="game-header">
+            <div class="jugador-info">
+                <span class="jugador-avatar">&#128100;</span>
+                <div class="jugador-details">
+                    <h3>@(jugador?.Nombre ?? "Jugador")</h3>
+                    <p>Marcador: @(jugador?.Marcador ?? 0) puntos</p>
+                </div>
+            </div>
+            <div class="game-stats">
+                <div class="intentos-display">Tiempo: <span id="tiempo-restante">@tiempo</span>s</div>
+                <div class="nivel-display">Nivel: @nivel</div>
+            </div>
+        </div>
+        
 
-    <div class="letras-container">
-        @if (!string.IsNullOrEmpty(palabra))
-        {
-            foreach (var letra in palabra)
-            {
-                <div class="letra-oculta">_</div> <!-- O muestra letra si fue adivinada -->
-            }
-        }
+
+        <div class="ahorcado-drawing" id="ahorcado-drawing">
+            <!-- El dibujo del ahorcado se generará dinámicamente -->
+        </div>
+
+        <div class="palabra-container">
+            <h3>Palabra a adivinar:</h3>
+            <div class="palabra-letras" id="palabra-letras">
+                <!-- Las letras se generarán dinámicamente -->
+            </div>
+            <div class="palabra-completa" id="palabra-completa" style="display: none;"></div>
+        </div>
+
+        <div class="mensaje-juego" id="mensaje-juego" style="display: none;"></div>
+
+        <div class="teclado-container">
+            <h3>Teclado Virtual:</h3>
+            <div class="teclado" id="teclado">
+                <!-- El teclado se generará dinámicamente -->
+            </div>
+        </div>
+
+        <div class="botones-accion" id="botones-accion" style="display: none;">
+            <a href="@Url.Action("IniciarPartida", "Home")" class="btn-accion btn-nueva-partida">&#127918; Nueva Partida</a>
+            <a href="@Url.Action("MenuPrincipal", "Home")" class="btn-accion btn-menu">&#127968; Menú Principal</a>
+        </div>
     </div>
-
-    <div class="teclado">
-        @{
-            string letras = "abcdefghijklmnñopqrstuvwxyz";
-            foreach (var letra in letras)
-            {
-                <button class="tecla" onclick="seleccionarLetra('@letra')">@letra</button>
-            }
-        }
+    
+    <!-- Botón de terminar partida fuera de la caja blanca -->
+    <div class="terminar-partida-container">
+        <button class="terminar-partida-btn" onclick="confirmarTerminarPartida()">Terminar Partida</button>
     </div>
+</div>
 
-    <div class="contador-intentos">
-        @intentos
+<!-- Modal de confirmación para terminar partida -->
+<div class="modal-overlay" id="modal-terminar">
+    <div class="modal-content">
+        <div class="modal-title">⚠️ Confirmar Acción</div>
+        <div class="modal-message">¿Estás seguro que quieres salir del juego?</div>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-seguir" onclick="cerrarModal()">🎮 Seguir Jugando</button>
+            <button class="modal-btn modal-btn-salir" onclick="terminarPartidaConfirmada()">🚪 Salir</button>
+        </div>
     </div>
 </div>
 
 <script>
-    function seleccionarLetra(letra) {
-        // Aquí puedes llamar a un endpoint o enviar la letra para validarla
-        alert("Letra seleccionada: " + letra);
+    // Variables del juego
+    let palabraSecreta = '@Html.Raw(palabra)'.toUpperCase();
+    let palabraOriginal = '@Html.Raw(palabraOriginal)';
+    let letrasAdivinadas = new Set();
+    let tiempoRestante = @tiempo;
+    let partidaTerminada = false;
+    let jugadorId = @(jugador?.Identificacion ?? 0);
+    let nivelPartida = '@nivel';
+    let partidaIdActual = @(partidaId ?? 0);
+    let temporizador;
+
+    // Dibujos del ahorcado para diferentes niveles de tiempo
+    const dibujosAhorcado = [
+        // 1 parte - solo la base (cuerda)
+        `  +---+
+      |
+      |
+      |
+      |
+      |
+=========`,
+        // 2 partes - base + cabeza
+        `  +---+
+  |   |
+  O   |
+      |
+      |
+      |
+=========`,
+        // 3 partes - base + cabeza + brazo izquierdo
+        `  +---+
+  |   |
+  O   |
+ /    |
+      |
+      |
+=========`,
+        // 4 partes - base + cabeza + brazos
+        `  +---+
+  |   |
+  O   |
+ /|   |
+      |
+      |
+=========`,
+        // 5 partes - base + cabeza + brazos + pierna derecha
+        `  +---+
+  |   |
+  O   |
+ /|\\  |
+      |
+      |
+=========`,
+        // 6 partes - base + cabeza + brazos + pierna derecha + pierna izquierda
+        `  +---+
+  |   |
+  O   |
+ /|\\  |
+ /    |
+      |
+=========`,
+        // 7 partes - ahorcado completo (tiempo agotado)
+        `  +---+
+  |   |
+  O   |
+ /|\\  |
+ / \\  |
+      |
+=========`
+    ];
+
+    // Inicializar el juego
+    function inicializarJuego() {
+        generarTeclado();
+        actualizarPalabra();
+        actualizarAhorcado();
+        actualizarTiempo();
+        iniciarTemporizador();
     }
+
+    // Generar el teclado virtual
+    function generarTeclado() {
+        const teclado = document.getElementById('teclado');
+        const letras = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+        
+        teclado.innerHTML = '';
+        
+        for (let letra of letras) {
+            const tecla = document.createElement('button');
+            tecla.className = 'tecla';
+            tecla.textContent = letra;
+            tecla.onclick = () => seleccionarLetra(letra);
+            teclado.appendChild(tecla);
+        }
+    }
+
+    // Actualizar la visualización de la palabra
+    function actualizarPalabra() {
+        const palabraLetras = document.getElementById('palabra-letras');
+        palabraLetras.innerHTML = '';
+        
+        for (let letra of palabraSecreta) {
+            const letraDiv = document.createElement('div');
+            letraDiv.className = 'letra-oculta';
+            
+            if (letrasAdivinadas.has(letra)) {
+                letraDiv.textContent = letra;
+                letraDiv.classList.add('letra-revelada');
+            } else {
+                letraDiv.textContent = '_';
+            }
+            
+            palabraLetras.appendChild(letraDiv);
+        }
+    }
+
+    // Actualizar el dibujo del ahorcado basado en el tiempo
+    function actualizarAhorcado() {
+        const ahorcadoDrawing = document.getElementById('ahorcado-drawing');
+        const tiempoTotal = @tiempo;
+        const tiempoTranscurrido = tiempoTotal - tiempoRestante;
+        const tiempoPorParte = tiempoTotal / 7; // 7 partes del ahorcado
+        const partesCompletadas = Math.floor(tiempoTranscurrido / tiempoPorParte);
+        const indiceDibujo = Math.min(partesCompletadas, dibujosAhorcado.length - 1);
+        ahorcadoDrawing.textContent = dibujosAhorcado[indiceDibujo];
+    }
+
+
+
+    // Actualizar contador de tiempo
+    function actualizarTiempo() {
+        const minutos = Math.floor(tiempoRestante / 60);
+        const segundos = tiempoRestante % 60;
+        const tiempoFormateado = `${minutos}:${segundos.toString().padStart(2, '0')}`;
+        document.getElementById('tiempo-restante').textContent = tiempoFormateado;
+    }
+
+    // Iniciar temporizador
+    function iniciarTemporizador() {
+        temporizador = setInterval(() => {
+            tiempoRestante--;
+            actualizarTiempo();
+            actualizarAhorcado(); // Actualizar el ahorcado conforme pasa el tiempo
+            
+            if (tiempoRestante <= 0) {
+                clearInterval(temporizador);
+                terminarPartida(false);
+            }
+        }, 1000);
+    }
+
+    // Seleccionar una letra
+    function seleccionarLetra(letra) {
+        if (partidaTerminada) return;
+        
+        const tecla = event.target;
+        if (tecla.disabled) return;
+        
+        // Deshabilitar la tecla
+        tecla.disabled = true;
+        
+        if (palabraSecreta.includes(letra)) {
+            // Letra correcta
+            tecla.classList.add('correcta');
+            letrasAdivinadas.add(letra);
+            actualizarPalabra();
+            
+            // Verificar si ganó
+            if (verificarVictoria()) {
+                terminarPartida(true);
+            }
+        } else {
+            // Letra incorrecta
+            tecla.classList.add('incorrecta');
+            // El ahorcado se actualiza automáticamente con el tiempo
+        }
+    }
+
+    // Verificar si el jugador ganó
+    function verificarVictoria() {
+        for (let letra of palabraSecreta) {
+            if (!letrasAdivinadas.has(letra)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Terminar la partida
+    function terminarPartida(victoria) {
+        partidaTerminada = true;
+        
+        // Detener el temporizador
+        if (temporizador) {
+            clearInterval(temporizador);
+        }
+        
+        const mensajeJuego = document.getElementById('mensaje-juego');
+        const palabraCompleta = document.getElementById('palabra-completa');
+        const botonesAccion = document.getElementById('botones-accion');
+        
+        // Mostrar la palabra completa (usando la original con tildes)
+        palabraCompleta.textContent = `Palabra: ${palabraOriginal}`;
+        palabraCompleta.style.display = 'block';
+        
+        if (victoria) {
+            mensajeJuego.textContent = '¡FELICIDADES! ¡Has ganado! 🎉';
+            mensajeJuego.className = 'mensaje-juego mensaje-ganar';
+        } else {
+            if (tiempoRestante <= 0) {
+                mensajeJuego.textContent = '¡SE ACABÓ EL TIEMPO! Has perdido ⏰';
+            } else {
+                mensajeJuego.textContent = '¡GAME OVER! Has perdido 😢';
+            }
+            mensajeJuego.className = 'mensaje-juego mensaje-perder';
+        }
+        
+        mensajeJuego.style.display = 'block';
+        botonesAccion.style.display = 'flex';
+        
+        // Actualizar puntuación en el servidor
+        actualizarPuntuacion(victoria);
+    }
+
+    // Actualizar puntuación en el servidor
+    function actualizarPuntuacion(victoria) {
+        fetch('@Url.Action("ActualizarPuntuacion", "Home")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+            },
+            body: JSON.stringify({
+                jugadorId: jugadorId,
+                victoria: victoria,
+                nivel: nivelPartida
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Puntuación actualizada:', data);
+            } else {
+                console.error('Error al actualizar puntuación:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error en la petición:', error);
+        });
+    }
+
+    // Funciones para el modal de confirmación
+    function confirmarTerminarPartida() {
+        const modal = document.getElementById('modal-terminar');
+        modal.style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        const modal = document.getElementById('modal-terminar');
+        modal.style.display = 'none';
+    }
+
+    function terminarPartidaConfirmada() {
+        // Detener el temporizador
+        if (temporizador) {
+            clearInterval(temporizador);
+        }
+        
+        // Marcar la partida como terminada
+        partidaTerminada = true;
+        
+        // Cerrar el modal
+        cerrarModal();
+        
+        // Actualizar puntuación (pérdida) y luego redirigir
+        fetch('@Url.Action("ActualizarPuntuacion", "Home")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+            },
+            body: JSON.stringify({
+                jugadorId: jugadorId,
+                victoria: false,
+                nivel: nivelPartida
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Puntuación actualizada:', data);
+            } else {
+                console.error('Error al actualizar puntuación:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error en la petición:', error);
+        })
+        .finally(() => {
+            // Redirigir a la página de iniciar partida
+            window.location.href = '@Url.Action("IniciarPartida", "Home")';
+        });
+    }
+
+    // Cerrar modal al hacer clic fuera de él
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('modal-terminar');
+        if (event.target === modal) {
+            cerrarModal();
+        }
+    });
+
+    // Inicializar el juego cuando se carga la página
+    document.addEventListener('DOMContentLoaded', inicializarJuego);
 </script>
 
 

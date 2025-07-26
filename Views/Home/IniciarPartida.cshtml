@@ -1,97 +1,509 @@
 ﻿@{
-    ViewBag.Title = "IniciarPartida";
+    ViewBag.Title = "Iniciar Partida";
 }
+
 <style>
-    .block-dark {
-        background-color: #101629;
-        padding: 1rem;
-        border-radius: 12px;
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        width: 100vw;
+        height: 100vh;
+        overflow-x: hidden;
+    }
+    .iniciar-partida-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #4e2a8e 0%, #2b86c5 100%);
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    .volver-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.2);
         color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .volver-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+        color: white;
+        text-decoration: none;
+    }
+    .titulo-iniciar {
+        color: #ffd600;
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 2rem;
+        text-align: center;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .form-container {
+        max-width: 600px;
+        width: 100%;
+    }
+    .info-block {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
     .block-icon {
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
+        font-size: 1.5rem;
+        margin-right: 0.8rem;
+        color: #ffd600;
     }
-
-    input[type="text"],
-    select.styled-select {
+    .block-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    .input-block {
+        background: #101629;
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .form-label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 0.8rem;
+        color: #1fd655;
+        font-size: 1.1rem;
+    }
+    .form-control {
         width: 100%;
-        padding: 0.6rem 0.75rem;
-        background-color: #1a203a;
+        padding: 12px;
+        border: 2px solid #333;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: #1a203a;
+        color: white;
+        transition: border-color 0.3s ease;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #1fd655;
+        box-shadow: 0 0 0 3px rgba(31, 214, 85, 0.1);
+    }
+    .nivel-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .nivel-option {
+        padding: 1.2rem;
+        border: 2px solid #333;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #1a203a;
+        color: white;
+    }
+    .nivel-option:hover {
+        border-color: #1fd655;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(31, 214, 85, 0.3);
+    }
+    .nivel-option.selected {
+        border-color: #1fd655;
+        background: linear-gradient(135deg, #1fd655 0%, #17b94c 100%);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(31, 214, 85, 0.4);
+    }
+    .nivel-option input[type="radio"] {
+        display: none;
+    }
+    .nivel-title {
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    .nivel-desc {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        display: block;
+    }
+    .iniciar-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #1fd655 0%, #17b94c 100%);
+        color: white;
         border: none;
         border-radius: 10px;
-        color: white;
-        font-size: 1rem;
-        outline: none;
+        font-size: 1.3rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+        box-shadow: 0 4px 15px rgba(31, 214, 85, 0.3);
     }
-    select.styled-select {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%23fff' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 0.75rem center;
-        background-size: 12px 8px;
-        padding-right: 2rem;
+    .iniciar-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(31, 214, 85, 0.4);
+    }
+    .iniciar-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    .warning-block {
+        background: linear-gradient(135deg, #ffb300 0%, #ff8f00 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(255, 179, 0, 0.3);
+    }
+    .preview-block {
+        background: linear-gradient(135deg, #a259f7 0%, #7c3aed 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(162, 89, 247, 0.3);
+    }
+    .preview-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .preview-icon {
+        font-size: 2rem;
+        color: #ffd600;
+    }
+    .jugador-info {
+        flex: 1;
+    }
+    .jugador-nombre {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 0.3rem;
+    }
+    .jugador-details {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .iniciar-partida-container {
+            padding: 1rem;
+        }
+        
+        .titulo-iniciar {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-container {
+            max-width: 100%;
+        }
+        
+        .info-block,
+        .input-block,
+        .warning-block {
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .block-title {
+            font-size: 1.1rem;
+        }
+        
+        .form-label {
+            font-size: 1rem;
+        }
+        
+        .form-control {
+            padding: 0.8rem;
+            font-size: 1rem;
+        }
+        
+        .nivel-options {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .nivel-option {
+            padding: 1rem;
+            min-height: auto;
+        }
+        
+        .iniciar-btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .volver-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .iniciar-partida-container {
+            padding: 0.5rem;
+        }
+        
+        .titulo-iniciar {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-block,
+        .input-block,
+        .warning-block {
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .block-title {
+            font-size: 1rem;
+        }
+        
+        .form-label {
+            font-size: 0.9rem;
+        }
+        
+        .form-control {
+            padding: 0.7rem;
+            font-size: 0.9rem;
+        }
+        
+        .nivel-option {
+            padding: 0.8rem;
+        }
+        
+        .nivel-title {
+            font-size: 1rem;
+        }
+        
+        .nivel-desc {
+            font-size: 0.8rem;
+        }
+        
+        .iniciar-btn {
+            padding: 0.7rem 1rem;
+            font-size: 1rem;
+        }
+        
+        .preview-content {
+            font-size: 0.9rem;
+        }
+    }
+
+    @@media (max-width: 360px) {
+        .titulo-iniciar {
+            font-size: 1.5rem;
+        }
+        
+        .info-block,
+        .input-block,
+        .warning-block {
+            padding: 0.6rem;
+        }
+        
+        .block-title {
+            font-size: 0.9rem;
+        }
+        
+        .form-label {
+            font-size: 0.8rem;
+        }
+        
+        .form-control {
+            padding: 0.6rem;
+            font-size: 0.8rem;
+        }
+        
+        .nivel-option {
+            padding: 0.6rem;
+        }
+        
+        .nivel-title {
+            font-size: 0.9rem;
+        }
+        
+        .nivel-desc {
+            font-size: 0.7rem;
+        }
+        
+        .iniciar-btn {
+            padding: 0.6rem 0.8rem;
+            font-size: 0.9rem;
+        }
+        
+        .preview-content {
+            font-size: 0.8rem;
+        }
     }
 </style>
 
-@model Ahorcado_Grupo5.Models.Partida
-
-<div class="crear-jugador-container">
+<div class="iniciar-partida-container">
     <a href="@Url.Action("MenuPrincipal", "Home")" class="volver-btn" title="Volver al menú principal">&#8592;</a>
-    <span class="titulo-crear">INICIAR PARTIDA</span>
-
-    <div class="info-block block-blue">
-        <span class="block-icon">&#9432;</span>
-        <span class="block-title">Jugadores Registrados</span><br />
-
-        <ul style="margin-bottom:0; margin-top:0.5rem;">
-            @if (Model?.Jugadores != null && Model.Jugadores.Any())
-            {
-                foreach (var jugador in Model.Jugadores)
-                {
-                    <li><b>Identificación:</b> @jugador.Identificacion</li>
-                    <li><b>Nombre:</b> @jugador.Nombre</li>
-                    <li style="margin-bottom: 0.5rem;"></li>
-                }
-            }
-            else
-            {
-                <li>No hay jugadores registrados.</li>
-            }
-        </ul>
-    </div>
-
-
-    <div class="puntuacion-block block-orange">
-        <span class="block-title">Nivel de Dificultad</span>
-        <div class="puntuacion-cols">
-            <div>
-                <b>Dificultad de la Partida:</b><br />
-                Fácil: 1 minuto con 30 segundoa<br />
-                Normal: 1 minuto<br />
-                Difícil: 30 segundos
+    
+    <div class="titulo-iniciar">INICIAR PARTIDA</div>
+    
+    <div class="form-container">
+        @if (ViewBag.Jugadores == null || !((SelectList)ViewBag.Jugadores).Any())
+        {
+            <div class="warning-block">
+                <span class="block-icon">⚠️</span>
+                <span class="block-title">No hay jugadores registrados</span><br />
+                Debes crear al menos un jugador antes de iniciar una partida.
             </div>
-        </div>
+            <a href="@Url.Action("CrearJugador", "Home")" class="iniciar-btn" style="text-decoration: none; display: block; text-align: center;">
+                &#128100; CREAR JUGADOR
+            </a>
+        }
+        else
+        {
+            using (Html.BeginForm("IniciarPartida", "Home", FormMethod.Post, new { @class = "form-iniciar-partida" }))
+            {
+                @Html.AntiForgeryToken()
+                
+                <div class="info-block">
+                    <span class="block-icon">&#9432;</span>
+                    <span class="block-title">Información de la Partida</span><br />
+                    Selecciona tu jugador y nivel de dificultad. Cada nivel tiene un tiempo límite diferente para completar la partida.
+                </div>
+
+                <div class="input-block">
+                    <span class="block-icon">&#128100;</span>
+                    <label class="form-label">Seleccionar Jugador</label>
+                    <select name="jugadorId" class="form-control" required>
+                        <option value="">-- Selecciona un jugador --</option>
+                        @foreach (var item in (SelectList)ViewBag.Jugadores)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                    <small style="color: #ccc; margin-top: 0.5rem; display: block;">Elige el jugador que participará en la partida</small>
+                </div>
+
+                <div class="input-block">
+                    <span class="block-icon">&#127918;</span>
+                    <label class="form-label">Nivel de Dificultad</label>
+                    <div class="nivel-options">
+                        <div class="nivel-option" data-for="facil">
+                            <input type="radio" name="nivel" id="facil" value="Fácil" required>
+                            <span class="nivel-title">Fácil</span>
+                            <span class="nivel-desc">1.5 minutos</span>
+                        </div>
+                        <div class="nivel-option" data-for="normal">
+                            <input type="radio" name="nivel" id="normal" value="Normal" required>
+                            <span class="nivel-title">Normal</span>
+                            <span class="nivel-desc">1 minuto</span>
+                        </div>
+                        <div class="nivel-option" data-for="dificil">
+                            <input type="radio" name="nivel" id="dificil" value="Difícil" required>
+                            <span class="nivel-title">Difícil</span>
+                            <span class="nivel-desc">30 segundos</span>
+                        </div>
+                    </div>
+                    <small style="color: #ccc; margin-top: 0.5rem; display: block;">Selecciona el nivel de dificultad para la partida</small>
+                </div>
+
+                <div class="preview-block">
+                    <span class="block-title">Vista Previa de la Partida</span>
+                    <div class="preview-content">
+                        <span class="preview-icon">&#127918;</span>
+                        <div class="jugador-info">
+                            <div class="jugador-nombre" id="preview-jugador">Selecciona un jugador</div>
+                            <div class="jugador-details" id="preview-nivel">Selecciona un nivel</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="iniciar-btn">
+                    &#128100; INICIAR PARTIDA
+                </button>
+            }
+        }
     </div>
-
-    <div class="input-block block-dark">
-        <span class="block-icon">&#128100;</span>
-        <label for="nivelDificultad">Nivel de Dificultad</label>
-        <div class="select-wrapper">
-            <select id="nivelDificultad" name="nivelDificultad" class="styled-select">
-                <option value="" disabled selected>-- Selecciona una opción --</option>
-                <option value="facil">Fácil</option>
-                <option value="normal">Normal</option>
-                <option value="dificil">Difícil</option>
-            </select>
-        </div>
-    </div>
-
-    <a href="@Url.Action("Partida", "Home")" class="crear-btn" style="font-size:1.3rem; text-decoration: none;">&#128100; INICIAR PARTIDA</a><br />
-
-
-
 </div>
+
+<script>
+    // Selección visual de nivel
+    document.querySelectorAll('.nivel-option').forEach(option => {
+        option.addEventListener('click', function() {
+            // Remover selección previa
+            document.querySelectorAll('.nivel-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Seleccionar el actual
+            this.classList.add('selected');
+            
+            // Marcar el radio button
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            // Actualizar vista previa
+            updatePreview();
+        });
+    });
+
+    // Actualizar vista previa cuando se selecciona jugador
+    document.querySelector('select[name="jugadorId"]')?.addEventListener('change', updatePreview);
+
+    function updatePreview() {
+        const jugadorSelect = document.querySelector('select[name="jugadorId"]');
+        const nivelRadio = document.querySelector('input[name="nivel"]:checked');
+        
+        const jugadorNombre = jugadorSelect?.options[jugadorSelect.selectedIndex]?.text || 'Selecciona un jugador';
+        const nivelNombre = nivelRadio?.value || 'Selecciona un nivel';
+        
+        document.getElementById('preview-jugador').textContent = jugadorNombre;
+        document.getElementById('preview-nivel').textContent = `Nivel: ${nivelNombre}`;
+    }
+
+    // Validación del formulario
+    document.querySelector('.form-iniciar-partida')?.addEventListener('submit', function(e) {
+        const jugadorId = document.querySelector('select[name="jugadorId"]').value;
+        const nivel = document.querySelector('input[name="nivel"]:checked')?.value;
+
+        if (!jugadorId) {
+            e.preventDefault();
+            alert('Por favor, selecciona un jugador.');
+            return false;
+        }
+
+        if (!nivel) {
+            e.preventDefault();
+            alert('Por favor, selecciona un nivel de dificultad.');
+            return false;
+        }
+
+        return true;
+    });
+</script>
 
