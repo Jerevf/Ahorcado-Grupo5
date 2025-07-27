@@ -756,6 +756,7 @@
             <div class="game-stats">
                 <div class="intentos-display">Tiempo: <span id="tiempo-restante">@tiempo</span>s</div>
                 <div class="nivel-display">Nivel: @nivel</div>
+                <div>Intentos: <span id="intentos">0</span>/5</div>
             </div>
         </div>
         
@@ -817,6 +818,7 @@
     let nivelPartida = '@nivel';
     let partidaIdActual = @(partidaId ?? 0);
     let temporizador;
+    let equivalenteIntentosParaTiempo = 0;
 
     // Dibujos del ahorcado para diferentes niveles de tiempo
     const dibujosAhorcado = [
@@ -891,9 +893,9 @@
     function generarTeclado() {
         const teclado = document.getElementById('teclado');
         const letras = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
-        
+
         teclado.innerHTML = '';
-        
+
         for (let letra of letras) {
             const tecla = document.createElement('button');
             tecla.className = 'tecla';
@@ -907,18 +909,18 @@
     function actualizarPalabra() {
         const palabraLetras = document.getElementById('palabra-letras');
         palabraLetras.innerHTML = '';
-        
+
         for (let letra of palabraSecreta) {
             const letraDiv = document.createElement('div');
             letraDiv.className = 'letra-oculta';
-            
+
             if (letrasAdivinadas.has(letra)) {
                 letraDiv.textContent = letra;
                 letraDiv.classList.add('letra-revelada');
             } else {
                 letraDiv.textContent = '_';
             }
-            
+
             palabraLetras.appendChild(letraDiv);
         }
     }
@@ -930,11 +932,20 @@
         const tiempoTranscurrido = tiempoTotal - tiempoRestante;
         const tiempoPorParte = tiempoTotal / 7; // 7 partes del ahorcado
         const partesCompletadas = Math.floor(tiempoTranscurrido / tiempoPorParte);
-        const indiceDibujo = Math.min(partesCompletadas, dibujosAhorcado.length - 1);
+        const indiceDibujo = Math.min(equivalenteIntentosParaTiempo > partesCompletadas ? equivalenteIntentosParaTiempo : partesCompletadas, dibujosAhorcado.length - 1);
         ahorcadoDrawing.textContent = dibujosAhorcado[indiceDibujo];
     }
 
-
+    // Actualizar el dibujo del ahorcado basado en los intentos
+    function actualizarAhorcadoIntentos() {
+        const ahorcadoDrawing = document.getElementById('ahorcado-drawing');
+        const intentos = document.getElementById('intentos').textContent;
+        const intentoPorParte = 7 / 5;
+        const partesCompletadas = Math.floor(Number(intentos) * Number(intentoPorParte));
+        const indiceDibujo = Math.min(partesCompletadas, dibujosAhorcado.length - 1);
+        equivalenteIntentosParaTiempo = partesCompletadas;
+        ahorcadoDrawing.textContent = dibujosAhorcado[indiceDibujo];
+    }
 
     // Actualizar contador de tiempo
     function actualizarTiempo() {
@@ -950,7 +961,7 @@
             tiempoRestante--;
             actualizarTiempo();
             actualizarAhorcado(); // Actualizar el ahorcado conforme pasa el tiempo
-            
+
             if (tiempoRestante <= 0) {
                 clearInterval(temporizador);
                 terminarPartida(false);
@@ -961,19 +972,19 @@
     // Seleccionar una letra
     function seleccionarLetra(letra) {
         if (partidaTerminada) return;
-        
+
         const tecla = event.target;
         if (tecla.disabled) return;
-        
+
         // Deshabilitar la tecla
         tecla.disabled = true;
-        
+
         if (palabraSecreta.includes(letra)) {
             // Letra correcta
             tecla.classList.add('correcta');
             letrasAdivinadas.add(letra);
             actualizarPalabra();
-            
+
             // Verificar si ganó
             if (verificarVictoria()) {
                 terminarPartida(true);
@@ -982,6 +993,12 @@
             // Letra incorrecta
             tecla.classList.add('incorrecta');
             // El ahorcado se actualiza automáticamente con el tiempo
+            const intento = document.getElementById('intentos');
+            intento.textContent = Number(intento.textContent) + 1;
+            actualizarAhorcadoIntentos();
+            if (Number(intento.textContent) == 5) {
+                terminarPartida(false);
+            }
         }
     }
 
@@ -998,20 +1015,20 @@
     // Terminar la partida
     function terminarPartida(victoria) {
         partidaTerminada = true;
-        
+
         // Detener el temporizador
         if (temporizador) {
             clearInterval(temporizador);
         }
-        
+
         const mensajeJuego = document.getElementById('mensaje-juego');
         const palabraCompleta = document.getElementById('palabra-completa');
         const botonesAccion = document.getElementById('botones-accion');
-        
+
         // Mostrar la palabra completa (usando la original con tildes)
         palabraCompleta.textContent = `Palabra: ${palabraOriginal}`;
         palabraCompleta.style.display = 'block';
-        
+
         if (victoria) {
             mensajeJuego.textContent = '¡FELICIDADES! ¡Has ganado! 🎉';
             mensajeJuego.className = 'mensaje-juego mensaje-ganar';
@@ -1023,10 +1040,10 @@
             }
             mensajeJuego.className = 'mensaje-juego mensaje-perder';
         }
-        
+
         mensajeJuego.style.display = 'block';
         botonesAccion.style.display = 'flex';
-        
+
         // Actualizar puntuación en el servidor
         actualizarPuntuacion(victoria);
     }
@@ -1074,13 +1091,13 @@
         if (temporizador) {
             clearInterval(temporizador);
         }
-        
+
         // Marcar la partida como terminada
         partidaTerminada = true;
-        
+
         // Cerrar el modal
         cerrarModal();
-        
+
         // Actualizar puntuación (pérdida) y luego redirigir
         fetch('@Url.Action("ActualizarPuntuacion", "Home")', {
             method: 'POST',
