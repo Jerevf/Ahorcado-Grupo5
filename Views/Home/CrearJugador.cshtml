@@ -1,10 +1,19 @@
-﻿@{
+﻿@model Ahorcado_Grupo5.Models.Jugador
+@{
     ViewBag.Title = "Crear Jugador";
 }
 
 <div class="crear-jugador-container">
     <a href="@Url.Action("MenuPrincipal", "Home")" class="volver-btn" title="Volver al menú principal">&#8592;</a>
     <span class="titulo-crear">CREAR JUGADOR</span>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" style="margin-bottom: 1rem; padding: 1rem; border-radius: 8px; background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24;">
+            <strong>Error:</strong> Por favor, corrige los siguientes errores:
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+        </div>
+    }
 
     <div class="info-block block-blue">
         <span class="block-icon">&#9432;</span>
@@ -14,20 +23,41 @@
             <li><b>Nombre:</b> Tu nombre completo</li>
         </ul>
     </div>
-    @using (Html.BeginForm("CrearJugador", "Home", FormMethod.Post))
+
+    @using (Html.BeginForm("CrearJugador", "Home", FormMethod.Post, new { @class = "form-crear-jugador" }))
     {
+        @Html.AntiForgeryToken()
+
         <div class="input-block block-dark">
-            <span class="block-icon">#</span>
-            <label for="identificacion">Identificación</label>
-            <input type="number" id="identificacion" name="identificacion" placeholder="Ingresa tu número de identificación..." min="1" max="999999999" maxlength="9" />
+            <span class="block-icon">#</span 
+            @Html.LabelFor(m => m.Identificacion, "Identificación")
+            @Html.TextBoxFor(m => m.Identificacion, new { 
+                @class = "form-control", 
+                type = "number", 
+                placeholder = "Ingresa tu número de identificación...", 
+                min = "1", 
+                max = "999999999", 
+                maxlength = "9",
+                required = "required"
+            })
+            @Html.ValidationMessageFor(m => m.Identificacion, "", new { @class = "text-danger" })
             <small>Número entero positivo único (máximo 9 dígitos)</small>
         </div>
+
         <div class="input-block block-dark">
             <span class="block-icon">&#128100;</span>
-            <label for="nombre">Nombre del Jugador</label>
-            <input type="text" id="nombre" name="nombre" placeholder="Ingresa tu nombre completo..." maxlength="50" />
+            @Html.LabelFor(m => m.Nombre, "Nombre del Jugador")
+            @Html.TextBoxFor(m => m.Nombre, new { 
+                @class = "form-control", 
+                type = "text", 
+                placeholder = "Ingresa tu nombre completo...", 
+                maxlength = "50",
+                required = "required"
+            })
+            @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger" })
             <small id="char-count">0/50 caracteres</small>
         </div>
+
         <div class="preview-block block-purple">
             <span class="block-title">Vista Previa del Jugador</span>
             <div class="preview-content">
@@ -67,8 +97,8 @@
 
 <script>
     // Actualizar vista previa en tiempo real y contador de caracteres
-    const nombreInput = document.getElementById('nombre');
-    const idInput = document.getElementById('identificacion');
+    const nombreInput = document.getElementById('Nombre');
+    const idInput = document.getElementById('Identificacion');
     const previewNombre = document.getElementById('preview-nombre');
     const previewId = document.getElementById('preview-id');
     const charCount = document.getElementById('char-count');
@@ -77,7 +107,36 @@
         previewNombre.textContent = nombreInput.value || 'Tu Nombre';
         charCount.textContent = nombreInput.value.length + '/50 caracteres';
     });
-    idInput.addEventListener('input', function () {
+    
+    idInput.addEventListener('input', function() {
         previewId.textContent = idInput.value ? `ID: ${idInput.value}` : 'ID: Tu Identificación';
+    });
+
+    // Validación del lado del cliente
+    document.querySelector('.form-crear-jugador').addEventListener('submit', function(e) {
+        const identificacion = document.getElementById('Identificacion').value;
+        const nombre = document.getElementById('Nombre').value.trim();
+
+        // Validar identificación
+        if (!identificacion || identificacion <= 0) {
+            e.preventDefault();
+            alert('La identificación debe ser un número entero positivo.');
+            return false;
+        }
+
+        // Validar nombre
+        if (!nombre) {
+            e.preventDefault();
+            alert('El nombre es obligatorio.');
+            return false;
+        }
+
+        if (nombre.length > 50) {
+            e.preventDefault();
+            alert('El nombre no puede exceder 50 caracteres.');
+            return false;
+        }
+
+        return true;
     });
 </script> 

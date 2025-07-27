@@ -1,0 +1,56 @@
+﻿@model Ahorcado_Grupo5.Models.Palabra
+
+@{
+    ViewBag.Title = "Agregar Palabra Nueva";
+}
+
+<div class="crear-jugador-container">
+    <a href="@Url.Action("MenuPrincipal", "Home")" class="volver-btn" title="Volver al menú principal">&#8592;</a>
+    <span class="titulo-crear">AGREGAR PALABRA</span>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success" style="margin-bottom: 1rem; padding: 1rem; border-radius: 8px;">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="info-block block-blue">
+        <span class="block-icon">&#9432;</span>
+        <span class="block-title">Requisitos de la Palabra</span><br />
+        <ul style="margin-bottom:0; margin-top:0.5rem;">
+            <li><b>Longitud:</b> Debe tener entre 5 y 10 letras.</li>
+            <li><b>Contenido:</b> Solo puede contener letras (incluyendo Ñ y tildes).</li>
+            <li><b>Duplicados:</b> No se permiten palabras que ya existan (ignora mayúsculas y tildes).</li>
+        </ul>
+    </div>
+
+    @using (Html.BeginForm("Crear", "Palabras", FormMethod.Post, new { @class = "form-crear-jugador" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="input-block block-dark">
+            <span class="block-icon">&#9000;</span>
+            @Html.LabelFor(m => m.TextoPalabra, "Palabra Nueva")
+            @Html.TextBoxFor(m => m.TextoPalabra, new
+            {
+                @class = "form-control",
+                type = "text",
+                placeholder = "Ingresa la palabra a agregar...",
+                maxlength = "10",
+                required = "required"
+            })
+            @Html.ValidationMessageFor(m => m.TextoPalabra, "", new { @class = "text-danger" })
+            <small>La palabra se guardará en mayúsculas.</small>
+        </div>
+
+        <button class="crear-btn" type="submit">
+            <span style="font-size:1.3rem;">&#128214;</span> AGREGAR AL DICCIONARIO
+        </button>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

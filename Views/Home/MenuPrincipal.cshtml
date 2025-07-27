@@ -70,19 +70,80 @@
         font-size: 1rem;
         opacity: 0.8;
     }
+    .alert {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-weight: bold;
+        animation: slideDown 0.5s ease-out;
+        max-width: 400px;
+        text-align: center;
+    }
+    .alert-success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+    .alert-danger {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+    }
+    @@keyframes slideDown {
+        from {
+            transform: translateX(-50%) translateY(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    }
 </style>
 
 <div class="main-bg">
-    <div>
-        <div class="menu-title">AHORCADO</div>
-        <div class="menu-subtitle">RETRO EDITION</div>
-        <hr style="border: 1.5px solid #ffd600; width: 120px; margin: 0 auto 2.5rem auto; opacity: 0.7;" />
-        <a href="@Url.Action("CrearJugador", "Home")" class="menu-btn btn-crear">Crear Jugador</a><br />
-        <button type="button" class="menu-btn btn-iniciar">Iniciar Partida</button><br />
-        <button type="button" class="menu-btn btn-agregar">Agregar Palabra</button><br />
-        <button type="button" class="menu-btn btn-leader">Leaderboard</button>
-        <div class="menu-footer">
-            <!-- Texto eliminado -->
+    @if (TempData["MensajeExito"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["MensajeExito"]
         </div>
+    }
+    
+    @if (TempData["MensajeError"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["MensajeError"]
+        </div>
+    }
+
+<div>
+    <div class="menu-title">AHORCADO</div>
+    <div class="menu-subtitle">RETRO EDITION</div>
+    <hr style="border: 1.5px solid #ffd600; width: 120px; margin: 0 auto 2.5rem auto; opacity: 0.7;" />
+    <a href="@Url.Action("CrearJugador", "Home")" class="menu-btn btn-crear">Crear Jugador</a><br />
+    <a href="@Url.Action("IniciarPartida", "Home")" class="menu-btn btn-iniciar">Iniciar Partida</a><br />
+    <a href="@Url.Action("Crear", "Palabras")" class="menu-btn btn-agregar">Agregar Palabra</a><br />
+    <button type="button" class="menu-btn btn-leader">Leaderboard</button>
+    <div class="menu-footer">
+        <!-- Texto eliminado -->
     </div>
-</div> 
+</div>
+</div>
+
+<script>
+    // Auto-hide alerts after 5 seconds
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            alert.style.opacity = '0';
+            alert.style.transform = 'translateX(-50%) translateY(-100%)';
+            setTimeout(function() {
+                alert.remove();
+            }, 500);
+        });
+    }, 5000);
+</script> 
