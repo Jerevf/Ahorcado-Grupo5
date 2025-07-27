@@ -302,5 +302,13 @@ namespace Ahorcado_Grupo5.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public ActionResult Leaderboard()
+        {
+            var jugadores = db.Jugadores
+                .OrderByDescending(j => j.Marcador)
+                .ToList();
+            return View(jugadores);
+        }
     }
 }

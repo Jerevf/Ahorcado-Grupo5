@@ -257,6 +257,7 @@
     <Content Include="Views\Home\IniciarPartida.cshtml" />
     <Content Include="Views\Home\Partida.cshtml" />
     <Content Include="Views\Palabras\Crear.cshtml" />
+    <Content Include="Views\Home\Leaderboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
