@@ -8,12 +8,14 @@ namespace Ahorcado_Grupo5.Models
 {
     public class Palabra
     {
-        [Key] // Llave primaria autoincremental
         public int Id { get; set; }
 
-        [Required]// Campo obligatorio para la palabra
+        [Required(ErrorMessage = "Debes ingresar una palabra.")]
+        [StringLength(10, MinimumLength = 5, ErrorMessage = "La palabra debe tener entre 5 y 10 letras.")]
+        [RegularExpression("^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$", ErrorMessage = "La palabra solo puede contener letras.")]
         public string TextoPalabra { get; set; }
 
         public bool HaSidoUsada { get; set; }
+
     }
 }
