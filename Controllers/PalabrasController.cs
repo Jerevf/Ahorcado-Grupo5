@@ -45,7 +45,7 @@ namespace Ahorcado_Grupo5.Controllers
                 db.SaveChanges();
 
                 // Mensaje de éxito y redirección
-                TempData["SuccessMessage"] = "¡Palabra agregada exitosamente!";
+                TempData["SuccessMessage"] = $"¡Palabra '{palabra.TextoPalabra}' creada exitosamente!";
                 return RedirectToAction("Crear");
             }
 

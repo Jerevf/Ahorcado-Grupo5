@@ -11,5 +11,7 @@ namespace Ahorcado_Grupo5.Models
         public DbSet<Jugador> Jugadores { get; set; }
         public DbSet<Palabra> Palabras { get; set; }
         public DbSet<Partida> Partidas { get; set; }
+
+        
     }
 }

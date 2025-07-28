@@ -24,30 +24,8 @@
         justify-content: center;
         position: relative;
     }
-    .volver-btn {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        font-size: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .volver-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.1);
-        color: white;
-        text-decoration: none;
-    }
+   
+   
     .titulo-iniciar {
         color: #ffd600;
         font-size: 2.5rem;
@@ -261,11 +239,7 @@
             font-size: 1.1rem;
         }
         
-        .volver-btn {
-            width: 40px;
-            height: 40px;
-            font-size: 1.2rem;
-        }
+       
     }
 
     @@media (max-width: 480px) {
@@ -368,10 +342,11 @@
 </style>
 
 <div class="iniciar-partida-container">
-    <a href="@Url.Action("MenuPrincipal", "Home")" class="volver-btn" title="Volver al menú principal">&#8592;</a>
-    
-    <div class="titulo-iniciar">INICIAR PARTIDA</div>
-    
+    <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 2rem;">
+        <a href="@Url.Action("MenuPrincipal", "Home")" class="volver-btn" style="margin-right: 1rem;" title="Volver al menú principal">&#8592;</a>
+        <span class="titulo-iniciar" style="margin: 0;">INICIAR PARTIDA</span>
+    </div>
+
     <div class="form-container">
         @if (ViewBag.Jugadores == null || !((SelectList)ViewBag.Jugadores).Any())
         {
@@ -389,7 +364,7 @@
             using (Html.BeginForm("IniciarPartida", "Home", FormMethod.Post, new { @class = "form-iniciar-partida" }))
             {
                 @Html.AntiForgeryToken()
-                
+
                 <div class="info-block">
                     <span class="block-icon">&#9432;</span>
                     <span class="block-title">Información de la Partida</span><br />
