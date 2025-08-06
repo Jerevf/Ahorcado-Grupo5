@@ -766,14 +766,21 @@
             <div class="game-stats">
                 <div class="intentos-display">Tiempo: <span id="tiempo-restante">@tiempo</span>s</div>
                 <div class="nivel-display">Nivel: @nivel</div>
-                <div>Intentos: <span id="intentos">0</span>/5</div>
+                <div>Intentos: <span id="intentos">0</span>/6</div>
             </div>
         </div>
 
 
-
-        <div class="ahorcado-drawing" id="ahorcado-drawing">
-            <!-- El dibujo del ahorcado se generará dinámicamente -->
+        <!-- Contiene las imagenes del ahorcado -->
+        <div id="ahorcado-container" class="ahorcado-drawing">
+            <img id="ahorcado-img-0" src="@Url.Content("~/Content/images/ahorcado_0.png")" style="display: block; width: 100%; height: 100%; object-fit: contain;" />
+            <img id="ahorcado-img-1" src="@Url.Content("~/Content/images/ahorcado_1.png")" style="display: none; width: 100%; height: 100%; object-fit: contain;" />
+            <img id="ahorcado-img-2" src="@Url.Content("~/Content/images/ahorcado_2.png")" style="display: none; width: 100%; height: 100%; object-fit: contain;" />
+            <img id="ahorcado-img-3" src="@Url.Content("~/Content/images/ahorcado_3.png")" style="display: none; width: 100%; height: 100%; object-fit: contain;" />
+            <img id="ahorcado-img-4" src="@Url.Content("~/Content/images/ahorcado_4.png")" style="display: none; width: 100%; height: 100%; object-fit: contain;" />
+            <img id="ahorcado-img-5" src="@Url.Content("~/Content/images/ahorcado_5.png")" style="display: none; width: 100%; height: 100%; object-fit: contain;" />
+            <img id="ahorcado-img-6" src="@Url.Content("~/Content/images/ahorcado_6.png")" style="display: none; width: 100%; height: 100%; object-fit: contain;" />
+            <img id="ahorcado-img-7" src="@Url.Content("~/Content/images/ahorcado_7.png")" style="display: none; width: 100%; height: 100%; object-fit: contain;" />
         </div>
 
         <div class="palabra-container">
@@ -830,71 +837,12 @@
     let temporizador;
     let equivalenteIntentosParaTiempo = 0;
 
-    // Dibujos del ahorcado para diferentes niveles de tiempo
-    const dibujosAhorcado = [
-        // 1 parte - solo la base (cuerda)
-        `  +---+
-      |
-      |
-      |
-      |
-      |
-=========`,
-        // 2 partes - base + cabeza
-        `  +---+
-  |   |
-  O   |
-      |
-      |
-      |
-=========`,
-        // 3 partes - base + cabeza + brazo izquierdo
-        `  +---+
-  |   |
-  O   |
- /    |
-      |
-      |
-=========`,
-        // 4 partes - base + cabeza + brazos
-        `  +---+
-  |   |
-  O   |
- /|   |
-      |
-      |
-=========`,
-        // 5 partes - base + cabeza + brazos + pierna derecha
-        `  +---+
-  |   |
-  O   |
- /|\\  |
-      |
-      |
-=========`,
-        // 6 partes - base + cabeza + brazos + pierna derecha + pierna izquierda
-        `  +---+
-  |   |
-  O   |
- /|\\  |
- /    |
-      |
-=========`,
-        // 7 partes - ahorcado completo (tiempo agotado)
-        `  +---+
-  |   |
-  O   |
- /|\\  |
- / \\  |
-      |
-=========`
-    ];
 
     // Inicializar el juego
     function inicializarJuego() {
+        actualizarAhorcado(0);
         generarTeclado();
         actualizarPalabra();
-        actualizarAhorcado();
         actualizarTiempo();
         iniciarTemporizador();
     }
@@ -935,27 +883,27 @@
         }
     }
 
-    // Actualizar el dibujo del ahorcado basado en el tiempo
-    function actualizarAhorcado() {
-        const ahorcadoDrawing = document.getElementById('ahorcado-drawing');
-        const tiempoTotal = @tiempo;
-        const tiempoTranscurrido = tiempoTotal - tiempoRestante;
-        const tiempoPorParte = tiempoTotal / 7; // 7 partes del ahorcado
-        const partesCompletadas = Math.floor(tiempoTranscurrido / tiempoPorParte);
-        const indiceDibujo = Math.min(equivalenteIntentosParaTiempo > partesCompletadas ? equivalenteIntentosParaTiempo : partesCompletadas, dibujosAhorcado.length - 1);
-        ahorcadoDrawing.textContent = dibujosAhorcado[indiceDibujo];
+    // Función para actualizar el ahorcado con imágenes
+    function actualizarAhorcado(numeroDeErrores) {
+        // Oculta todas las imágenes primero
+        for (let i = 0; i <= 6; i++) {
+            const img = document.getElementById('ahorcado-img-' + i);
+            if (img) {
+                img.style.display = 'none';
+            }
+        }
+
+        // Muestra solo la imagen que corresponde al número de errores
+        // Se asegura de no intentar mostrar una imagen que no existe
+        const indiceImagen = Math.min(numeroDeErrores, 6);
+        const imagenActual = document.getElementById('ahorcado-img-' + indiceImagen);
+        if (imagenActual) {
+            imagenActual.style.display = 'block';
+        }
     }
 
     // Actualizar el dibujo del ahorcado basado en los intentos
-    function actualizarAhorcadoIntentos() {
-        const ahorcadoDrawing = document.getElementById('ahorcado-drawing');
-        const intentos = document.getElementById('intentos').textContent;
-        const intentoPorParte = 7 / 5;
-        const partesCompletadas = Math.floor(Number(intentos) * Number(intentoPorParte));
-        const indiceDibujo = Math.min(partesCompletadas, dibujosAhorcado.length - 1);
-        equivalenteIntentosParaTiempo = partesCompletadas;
-        ahorcadoDrawing.textContent = dibujosAhorcado[indiceDibujo];
-    }
+
 
     // Actualizar contador de tiempo
     function actualizarTiempo() {
@@ -970,7 +918,6 @@
         temporizador = setInterval(() => {
             tiempoRestante--;
             actualizarTiempo();
-            actualizarAhorcado(); // Actualizar el ahorcado conforme pasa el tiempo
 
             if (tiempoRestante <= 0) {
                 clearInterval(temporizador);
@@ -1008,8 +955,8 @@
             // El ahorcado se actualiza automáticamente con el tiempo
             const intento = document.getElementById('intentos');
             intento.textContent = Number(intento.textContent) + 1;
-            actualizarAhorcadoIntentos();
-            if (Number(intento.textContent) == 5) {
+            actualizarAhorcado(Number(intento.textContent));
+            if (Number(intento.textContent) == 6) {
                 terminarPartida(false);
             }
         }
@@ -1069,9 +1016,22 @@
         palabraCompleta.style.display = 'block';
 
         if (victoria) {
+            // 1. Ocultar todas las imágenes del ahorcado (0-6)
+            for (let i = 0; i <= 6; i++) {
+                const img = document.getElementById('ahorcado-img-' + i);
+                if (img) {
+                    img.style.display = 'none';
+                }
+            }
+            // 2. Mostrar la imagen de victoria
+            const imgVictoria = document.getElementById('ahorcado-img-7');
+            if (imgVictoria) {
+                imgVictoria.style.display = 'block';
+            }
             mensajeJuego.textContent = '¡FELICIDADES! ¡Has ganado! 🎉';
             mensajeJuego.className = 'mensaje-juego mensaje-ganar';
         } else {
+            actualizarAhorcado(7);
             if (tiempoRestante <= 0) {
                 mensajeJuego.textContent = '¡SE ACABÓ EL TIEMPO! Has perdido ⏰';
             } else {
@@ -1131,7 +1091,7 @@
             clearInterval(temporizador);
         }
 
-        // Marcar la partida como terminada
+        // Marcar la partida como terminada 
         partidaTerminada = true;
 
         // Cerrar el modal
