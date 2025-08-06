@@ -23,5 +23,7 @@ namespace Ahorcado_Grupo5.Models
 
         [Display(Name = "Partidas Perdidas")]
         public int PartidasPerdidas { get; set; }
+
+        public string AvatarUrl { get; set; }
     }
 }

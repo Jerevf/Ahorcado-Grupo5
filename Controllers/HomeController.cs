@@ -35,6 +35,28 @@ namespace Ahorcado_Grupo5.Controllers
             return View();
         }
 
+        // ESTE MÉTODO DEVUELVE LOS DETALLES DE UN JUGADOR COMO JSON
+        public JsonResult GetJugadorDetails(int id)
+        {
+            var jugador = db.Jugadores.Find(id);
+
+            if (jugador == null)
+            {
+                // Devuelve nulo si no se encuentra el jugador
+                return Json(null, JsonRequestBehavior.AllowGet);
+            }
+
+            var jugadorData = new
+            {
+                nombre = jugador.Nombre,
+                marcador = jugador.Marcador,
+                avatarUrl = jugador.AvatarUrl
+            };
+
+            // Devolvemos los datos y permitimos que se llame con GET desde el navegador
+            return Json(jugadorData, JsonRequestBehavior.AllowGet);
+        }
+
         // GET: CrearJugador
         public ActionResult CrearJugador()
         {
@@ -42,9 +64,10 @@ namespace Ahorcado_Grupo5.Controllers
         }
 
         // POST: CrearJugador
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CrearJugador([Bind(Include = "Identificacion,Nombre")] Jugador jugador)
+        public ActionResult CrearJugador([Bind(Include = "Identificacion,Nombre,AvatarUrl")] Jugador jugador)
         {
             try
             {

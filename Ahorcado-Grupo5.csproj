@@ -172,6 +172,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202508060637535_AgregaAvatarAJugador.cs" />
+    <Compile Include="Migrations\202508060637535_AgregaAvatarAJugador.Designer.cs">
+      <DependentUpon>202508060637535_AgregaAvatarAJugador.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AhorcadoContext.cs" />
     <Compile Include="Models\Jugador.cs" />
@@ -268,6 +272,11 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.7.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202508060637535_AgregaAvatarAJugador.resx">
+      <DependentUpon>202508060637535_AgregaAvatarAJugador.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

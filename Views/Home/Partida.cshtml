@@ -104,6 +104,14 @@
         opacity: 0.9;
         font-size: 0.9rem;
     }
+
+    .jugador-avatar-img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 2px solid #ffd600;
+    }
+
     .game-stats {
         text-align: right;
     }
@@ -757,7 +765,14 @@
     <div class="game-container">
         <div class="game-header">
             <div class="jugador-info">
-                <span class="jugador-avatar">&#128100;</span>
+                @if (!string.IsNullOrEmpty(jugador?.AvatarUrl))
+                {
+                    <img src="@jugador.AvatarUrl" alt="Avatar" class="jugador-avatar-img" />
+                }
+                else
+                {
+                    <span class="jugador-avatar-default">&#128100;</span>
+                }
                 <div class="jugador-details">
                     <h3>@(jugador?.Nombre ?? "Jugador")</h3>
                     <p>Marcador: @(jugador?.Marcador ?? 0) puntos</p>
