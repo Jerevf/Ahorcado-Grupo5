@@ -326,8 +326,17 @@
     .botones-accion {
         display: flex;
         justify-content: center;
-        gap: 1rem;
         margin-top: 2rem;
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+    }
+    
+    .botones-accion.juego-activo {
+        opacity: 0.6;
+    }
+    
+    .botones-accion.juego-terminado {
+        opacity: 1;
     }
     .btn-accion {
         padding: 12px 24px;
@@ -815,9 +824,9 @@
             </div>
         </div>
 
-        <div class="botones-accion" id="botones-accion" style="display: none;">
-            <a href="@Url.Action("IniciarPartida", "Home")" class="btn-accion btn-nueva-partida">&#127918; Nueva Partida</a>
-            <a href="@Url.Action("MenuPrincipal", "Home")" class="btn-accion btn-menu">&#127968; Menú Principal</a>
+        <!-- Botón "Nueva Partida" siempre visible según requerimiento del enunciado -->
+        <div class="botones-accion" id="botones-accion">
+            <a href="@Url.Action("NuevaPartida", "Home", new { jugadorId = jugador?.Identificacion, nivel = nivel })" class="btn-accion btn-nueva-partida">&#127918; Nueva Partida</a>
         </div>
     </div>
 
@@ -827,7 +836,7 @@
     </div>
 </div>
 
-<!-- Modal de confirmación para terminar partida -->
+<!-- Confirmación para terminar partida -->
 <div class="modal-overlay" id="modal-terminar">
     <div class="modal-content">
         <div class="modal-title">⚠️ Confirmar Acción</div>
@@ -860,6 +869,10 @@
         actualizarPalabra();
         actualizarTiempo();
         iniciarTemporizador();
+        
+        // Marcar botones como juego activo
+        const botonesAccion = document.getElementById('botones-accion');
+        botonesAccion.classList.add('juego-activo');
     }
 
     // Generar el teclado virtual
@@ -1090,7 +1103,10 @@
         }
 
         mensajeJuego.style.display = 'block';
-        botonesAccion.style.display = 'flex';
+        
+        // Cambiar estado de los botones a juego terminado
+        botonesAccion.classList.remove('juego-activo');
+        botonesAccion.classList.add('juego-terminado');
 
         // Actualizar puntuación en el servidor
         actualizarPuntuacion(victoria);
@@ -1142,6 +1158,11 @@
 
         // Marcar la partida como terminada
         partidaTerminada = true;
+        
+        // Cambiar estado de los botones
+        const botonesAccion = document.getElementById('botones-accion');
+        botonesAccion.classList.remove('juego-activo');
+        botonesAccion.classList.add('juego-terminado');
 
         // Cerrar el modal
         cerrarModal();
