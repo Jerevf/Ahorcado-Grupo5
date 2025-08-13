@@ -207,6 +207,81 @@ namespace Ahorcado_Grupo5.Controllers
             }
         }
 
+        // GET: NuevaPartida (para el botón "Nueva Partida")
+        public ActionResult NuevaPartida(int jugadorId, string nivel)
+        {
+            try
+            {
+                var jugador = db.Jugadores.Find(jugadorId);
+                if (jugador == null)
+                {
+                    TempData["MensajeError"] = "Jugador no encontrado.";
+                    return RedirectToAction("IniciarPartida");
+                }
+
+                // Obtener una palabra aleatoria no usada
+                var palabraAleatoria = db.Palabras
+                    .Where(p => !p.HaSidoUsada)
+                    .OrderBy(r => Guid.NewGuid())
+                    .FirstOrDefault();
+
+                if (palabraAleatoria == null)
+                {
+                    // Si no hay palabras disponibles, marcar todas como no usadas
+                    var todasLasPalabras = db.Palabras.ToList();
+                    foreach (var palabra in todasLasPalabras)
+                    {
+                        palabra.HaSidoUsada = false;
+                    }
+                    db.SaveChanges();
+
+                    palabraAleatoria = db.Palabras
+                        .OrderBy(r => Guid.NewGuid())
+                        .FirstOrDefault();
+                }
+
+                if (palabraAleatoria == null)
+                {
+                    TempData["MensajeError"] = "No hay palabras disponibles para jugar.";
+                    return RedirectToAction("IniciarPartida");
+                }
+
+                // Marcar la palabra como usada
+                palabraAleatoria.HaSidoUsada = true;
+                db.SaveChanges();
+
+                // Crear nueva partida
+                var partida = new Partida
+                {
+                    JugadorId = jugadorId,
+                    PalabraId = palabraAleatoria.Id,
+                    Nivel = nivel,
+                    Fecha = DateTime.Now,
+                    Victoria = false // Se actualizará al final de la partida
+                };
+
+                db.Partidas.Add(partida);
+                db.SaveChanges();
+
+                // Preparar datos para la vista de partida
+                ViewBag.PalabraOculta = NormalizarPalabra(palabraAleatoria.TextoPalabra); // Normalizada para el juego
+                ViewBag.PalabraOriginal = palabraAleatoria.TextoPalabra; // Original para mostrar al final
+                ViewBag.Tiempo = ObtenerTiempoPorNivel(nivel);
+                ViewBag.PartidaId = partida.Id;
+                ViewBag.Jugador = jugador;
+                ViewBag.Nivel = nivel;
+
+                return View("Partida");
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeError"] = "Error al iniciar la partida. Por favor, inténtalo de nuevo.";
+                return RedirectToAction("IniciarPartida");
+            }
+        }
+
+
+
         public ActionResult Partida()
         {
             return View();

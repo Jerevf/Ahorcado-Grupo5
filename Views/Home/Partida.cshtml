@@ -326,8 +326,17 @@
     .botones-accion {
         display: flex;
         justify-content: center;
-        gap: 1rem;
         margin-top: 2rem;
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+    }
+    
+    .botones-accion.juego-activo {
+        opacity: 0.6;
+    }
+    
+    .botones-accion.juego-terminado {
+        opacity: 1;
     }
     .btn-accion {
         padding: 12px 24px;
@@ -781,7 +790,7 @@
             <div class="game-stats">
                 <div class="intentos-display">Tiempo: <span id="tiempo-restante">@tiempo</span>s</div>
                 <div class="nivel-display">Nivel: @nivel</div>
-                <div>Intentos: <span id="intentos">0</span>/6</div>
+                <div>Intentos: <span id="intentos">0</span>/5</div>
             </div>
         </div>
 
@@ -815,9 +824,9 @@
             </div>
         </div>
 
-        <div class="botones-accion" id="botones-accion" style="display: none;">
-            <a href="@Url.Action("IniciarPartida", "Home")" class="btn-accion btn-nueva-partida">&#127918; Nueva Partida</a>
-            <a href="@Url.Action("MenuPrincipal", "Home")" class="btn-accion btn-menu">&#127968; Menú Principal</a>
+        <!-- Botón "Nueva Partida" siempre visible según requerimiento del enunciado -->
+        <div class="botones-accion" id="botones-accion">
+            <a href="@Url.Action("NuevaPartida", "Home", new { jugadorId = jugador?.Identificacion, nivel = nivel })" class="btn-accion btn-nueva-partida">&#127918; Nueva Partida</a>
         </div>
     </div>
 
@@ -827,7 +836,7 @@
     </div>
 </div>
 
-<!-- Modal de confirmación para terminar partida -->
+<!-- Confirmación para terminar partida -->
 <div class="modal-overlay" id="modal-terminar">
     <div class="modal-content">
         <div class="modal-title">⚠️ Confirmar Acción</div>
@@ -855,11 +864,15 @@
 
     // Inicializar el juego
     function inicializarJuego() {
-        actualizarAhorcado(0);
+        actualizarAhorcado();
         generarTeclado();
         actualizarPalabra();
         actualizarTiempo();
         iniciarTemporizador();
+        
+        // Marcar botones como juego activo
+        const botonesAccion = document.getElementById('botones-accion');
+        botonesAccion.classList.add('juego-activo');
     }
 
     // Generar el teclado virtual
@@ -899,9 +912,9 @@
     }
 
     // Función para actualizar el ahorcado con imágenes
-    function actualizarAhorcado(numeroDeErrores) {
+    function actualizarAhorcado() {
         // Oculta todas las imágenes primero
-        for (let i = 0; i <= 6; i++) {
+        for (let i = 0; i <= 5; i++) {
             const img = document.getElementById('ahorcado-img-' + i);
             if (img) {
                 img.style.display = 'none';
@@ -910,13 +923,38 @@
 
         // Muestra solo la imagen que corresponde al número de errores
         // Se asegura de no intentar mostrar una imagen que no existe
-        const indiceImagen = Math.min(numeroDeErrores, 6);
-        const imagenActual = document.getElementById('ahorcado-img-' + indiceImagen);
+        const tiempoTotal = @tiempo;
+        const tiempoTranscurrido = tiempoTotal - tiempoRestante;
+        const tiempoPorParte = tiempoTotal / 6; // 6 partes del ahorcado
+        const partesCompletadas = Math.floor(tiempoTranscurrido / tiempoPorParte);
+        const indiceDibujo = Math.min(equivalenteIntentosParaTiempo > partesCompletadas ? equivalenteIntentosParaTiempo : partesCompletadas, 6);
+        const imagenActual = document.getElementById('ahorcado-img-' + indiceDibujo);
         if (imagenActual) {
             imagenActual.style.display = 'block';
         }
     }
 
+    function actualizarAhorcadoIntentos() {
+        // Oculta todas las imágenes primero
+        for (let i = 0; i <= 5; i++) {
+            const img = document.getElementById('ahorcado-img-' + i);
+            if (img) {
+                img.style.display = 'none';
+            }
+        }
+
+        // Muestra solo la imagen que corresponde al número de errores
+        // Se asegura de no intentar mostrar una imagen que no existe
+        const intentos = document.getElementById('intentos').textContent;
+        const intentoPorParte = 6 / 5;
+        const partesCompletadas = Math.floor(Number(intentos) * Number(intentoPorParte));
+        const indiceDibujo = Math.min(partesCompletadas, 6);
+        equivalenteIntentosParaTiempo = partesCompletadas;
+        const imagenActual = document.getElementById('ahorcado-img-' + indiceDibujo);
+        if (imagenActual) {
+            imagenActual.style.display = 'block';
+        }
+    }
     // Actualizar el dibujo del ahorcado basado en los intentos
 
 
@@ -933,7 +971,7 @@
         temporizador = setInterval(() => {
             tiempoRestante--;
             actualizarTiempo();
-
+            actualizarAhorcado();
             if (tiempoRestante <= 0) {
                 clearInterval(temporizador);
                 terminarPartida(false);
@@ -970,8 +1008,8 @@
             // El ahorcado se actualiza automáticamente con el tiempo
             const intento = document.getElementById('intentos');
             intento.textContent = Number(intento.textContent) + 1;
-            actualizarAhorcado(Number(intento.textContent));
-            if (Number(intento.textContent) == 6) {
+            actualizarAhorcadoIntentos();
+            if (Number(intento.textContent) == 5) {
                 terminarPartida(false);
             }
         }
@@ -1046,7 +1084,16 @@
             mensajeJuego.textContent = '¡FELICIDADES! ¡Has ganado! 🎉';
             mensajeJuego.className = 'mensaje-juego mensaje-ganar';
         } else {
-            actualizarAhorcado(7);
+            for (let i = 0; i <= 6; i++) {
+                const img = document.getElementById('ahorcado-img-' + i);
+                if (img) {
+                    img.style.display = 'none';
+                }
+            }
+            const imgDerrota = document.getElementById('ahorcado-img-6');
+            if (imgDerrota) {
+                imgDerrota.style.display = 'block';
+            }
             if (tiempoRestante <= 0) {
                 mensajeJuego.textContent = '¡SE ACABÓ EL TIEMPO! Has perdido ⏰';
             } else {
@@ -1056,7 +1103,10 @@
         }
 
         mensajeJuego.style.display = 'block';
-        botonesAccion.style.display = 'flex';
+        
+        // Cambiar estado de los botones a juego terminado
+        botonesAccion.classList.remove('juego-activo');
+        botonesAccion.classList.add('juego-terminado');
 
         // Actualizar puntuación en el servidor
         actualizarPuntuacion(victoria);
@@ -1106,8 +1156,13 @@
             clearInterval(temporizador);
         }
 
-        // Marcar la partida como terminada 
+        // Marcar la partida como terminada
         partidaTerminada = true;
+        
+        // Cambiar estado de los botones
+        const botonesAccion = document.getElementById('botones-accion');
+        botonesAccion.classList.remove('juego-activo');
+        botonesAccion.classList.add('juego-terminado');
 
         // Cerrar el modal
         cerrarModal();
